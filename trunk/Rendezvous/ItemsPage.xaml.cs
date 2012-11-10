@@ -92,12 +92,13 @@ namespace Rendezvous
 
                     DateTime endDate;
                     string endDateString;
+                    string rsvpStatus;
 
                     try
                     {
                         endDate = DateTime.Parse((string)eventData.end_time);
                         endDateString = endDate.ToString();
-
+                        rsvpStatus = eventData.rsvp_status;
                     }
                     catch
                     {
@@ -122,7 +123,7 @@ namespace Rendezvous
                     }
 
                     SampleDataGroup eventObject = new SampleDataGroup(eventData.id, eventData.name,
-                        startDate.ToString(), endDateString, eventPicture, eventResult.description);
+                        startDate.ToString(), endDateString, eventPicture, eventResult.description, rsvpStatus);
 
                     try
                     {
