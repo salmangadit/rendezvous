@@ -1,5 +1,5 @@
-﻿using Rendezvous.Common;
-
+﻿using Parse;
+using Rendezvous.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,6 +33,9 @@ namespace Rendezvous
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            ParseClient.Initialize("LksU7Zn29D4GwHNBR0Jnnm1jkIxqOb3BVPZlNatX", "AQVHoduhgt1lHUSlmO8zexInbhR4me1VfjITg99Q");
+
         }
 
         /// <summary>
