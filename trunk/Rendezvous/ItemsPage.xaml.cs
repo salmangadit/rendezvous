@@ -213,13 +213,23 @@ namespace Rendezvous
         /// </summary>
         /// <param name="sender">The GridView (or ListView when the application is snapped)
         /// displaying the item clicked.</param>
-        /// <param name="e">Event data that describes the item clicked.</param>
+        /// <param name="e">Event data that describes the item clicked.</param
+        /// 
         void ItemView_ItemClick(object sender, ItemClickEventArgs e)
         {
             // Navigate to the appropriate destination page, configuring the new page
             // by passing required information as a navigation parameter
             var groupId = ((SampleDataGroup)e.ClickedItem).UniqueId;
             this.Frame.Navigate(typeof(SplitPage), groupId);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            dynamic parameters = new ExpandoObject();
+            parameters.id = _userId;
+            parameters.access_token = _accessToken;
+
+            this.Frame.Navigate(typeof(NewEvent), (Object)parameters);
         }
     }
 }
