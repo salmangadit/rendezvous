@@ -92,7 +92,7 @@ namespace Rendezvous
 
                     DateTime endDate;
                     string endDateString;
-                    string rsvpStatus;
+                    string rsvpStatus="";
 
                     try
                     {
@@ -133,27 +133,30 @@ namespace Rendezvous
                         {
                             string attendeeName = (string)user.name;
                             string attendeeFbId = (string)user.id;
-                            string rsvpStatus = (string)user.rsvp_status;
+                            string rsvpStatusAttendee = (string)user.rsvp_status;
 
                             switch (rsvpStatus)
                             {
                                 case "attending":
-                                    rsvpStatus = "Attending";
+                                    rsvpStatusAttendee = "Attending";
                                     break;
                                 case "not_replied":
-                                    rsvpStatus = "Not Replied";
+                                    rsvpStatusAttendee = "Not Replied";
                                     break;
-                                case "not_attending":
-                                    rsvpStatus = "Not Attending";
+                                case "declined":
+                                    rsvpStatusAttendee = "Not Attending";
+                                    break;
+                                case "unsure":
+                                    rsvpStatusAttendee = "Maybe";
                                     break;
                                 default:
-                                    rsvpStatus = "Error in response";
+                                    rsvpStatusAttendee = "Error in response";
                                     break;
                             }
 
                             attendeePicture = string.Format("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", attendeeFbId, "large", _fb.AccessToken);
 
-                            eventObject.Items.Add(new SampleDataItem(attendeeFbId, attendeeName, rsvpStatus, attendeePicture, eventObject));
+                            eventObject.Items.Add(new SampleDataItem(attendeeFbId, attendeeName, rsvpStatusAttendee, attendeePicture, eventObject));
                         }
                     }
                     catch (FacebookApiException ex)
