@@ -78,9 +78,11 @@ namespace Rendezvous
         {
             try
             {
-                dynamic result = await _fb.GetTaskAsync("me/events");
+                dynamic resultForCreatedResponded = await _fb.GetTaskAsync("me/events");
+                dynamic resultForNotResponded = await _fb.GetTaskAsync("me/events/not_replied");
 
-                eventsData = result.data;
+                eventsData = resultForCreatedResponded.data;
+                eventsData.AddRange(resultForNotResponded.data);
 
                 List<SampleDataGroup> allEventsFromFb = new List<SampleDataGroup>();
 
