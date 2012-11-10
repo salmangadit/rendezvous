@@ -8,6 +8,8 @@
     xmlns:common="using:Rendezvous.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerik="using:Telerik.UI.Xaml.Controls.Input" 
+    xmlns:telerikCore="using:Telerik.Core"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -84,9 +86,17 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Style="{StaticResource FormLabelStyle}" Text="Start time"/>
-                <TextBox Grid.Column="1" Name="startTime" Style="{StaticResource TextLabelStyle}" Margin="0,0,30,0" />
+                <telerik:RadDatePicker
+                           x:Name="startTime"
+                           DisplayValueFormat="yyyy-MM-dd"
+                           ItemLength="90"
+                           Margin="271,17,0,0" Grid.ColumnSpan="2"/>
                 <TextBlock Grid.Column="2" Style="{StaticResource FormLabelStyle}" Text="End time"/>
-                <TextBox Grid.Column="3" Name="endTime" Style="{StaticResource TextLabelStyle}" Margin="0,0,30,0" />
+                <telerik:RadDatePicker
+                           x:Name="endTime"
+                           DisplayValueFormat="yyyy-MM-dd"
+                           ItemLength="90"
+                           Margin="270,17,0,0" Grid.ColumnSpan="2" Grid.Column="2"/>
             </Grid>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -127,7 +137,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
-                    <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Text="Add Friends"/>
+                        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Text="Add Friends"/>
                         <TextBox x:Name="friendName" Style="{StaticResource TextLabelStyle}" KeyUp="friendName_KeyUp_1" Width="320" Margin="20,0,0,0"/>
                     </StackPanel>
                     <ListBox Grid.Row="1" Name="lstSuggestedFriends" Margin="10" SelectionChanged="lstSuggestedFriends_SelectionChanged_1" />
@@ -166,7 +176,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        
+
     </Grid>
     <Page.BottomAppBar>
         <AppBar>
