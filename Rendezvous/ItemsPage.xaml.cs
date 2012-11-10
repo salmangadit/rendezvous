@@ -16,12 +16,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Facebook;
+using Newtonsoft.Json.Linq;
+using Parse;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
 namespace Rendezvous
 {
+
     /// <summary>
     /// A page that displays a collection of item previews.  In the Split Application this page
     /// is used to display and select one of the available groups.
@@ -49,9 +52,9 @@ namespace Rendezvous
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            //var sampleDataGroups = SampleDataSource.GetGroups((String)navigationParameter);
+            var sampleDataGroups = SampleDataSource.GetGroups("AllGroups");
             dynamic parameters = (dynamic)navigationParameter;
-            //this.DefaultViewModel["Items"] = sampleDataGroups;
+            this.DefaultViewModel["Items"] = sampleDataGroups;
             _userId = parameters.id;
             _accessToken = parameters.access_token;
             _fb.AccessToken = _accessToken;
@@ -60,7 +63,8 @@ namespace Rendezvous
 
         private void LoadFacebookData()
         {
-            GraphApiAsyncDynamicExample();
+            GetIdAndName();
+            GetEvents();
             GetUserProfilePicture();
         }
 
@@ -82,17 +86,12 @@ namespace Rendezvous
                 // handel error message
             }
         }
-        private async void GraphApiAsyncDynamicExample()
+        private async void GetIdAndName()
         {
             
             try
             {
-                // instead of casting to IDictionary<string,object> or IList<object>
-                // you can also make use of the dynamic keyword.
                 dynamic result = await _fb.GetTaskAsync("me");
-
-                // You can either access it this way, using the .
-                dynamic id = result.id;
                 dynamic name = result.name;
 
                 // if dynamic you don't need to cast explicitly.
@@ -100,8 +99,36 @@ namespace Rendezvous
             }
             catch (FacebookApiException ex)
             {
-                int a;
-                // handle error
+
+            }
+        }
+
+        private async void GetEvents()
+        {
+            try
+            {
+                dynamic result = await _fb.GetTaskAsync("me/events");
+
+                List<dynamic> eventsData = result.data;
+
+                foreach (dynamic eventData in eventsData)
+                {
+                    //push each event into parse
+                    ParseObject eventObject = new ParseObject("Event");
+                    eventObject["userId"] = _userId;
+                    eventObject["eventId"] = eventData.id;
+                    eventObject["name"] = eventData.name;
+                    eventObject["startTime"] = eventData.start_time;
+                    eventObject["endTime"] = eventData.endtime;
+                    eventObject["location"] = eventData.location;
+                    eventObject["rsvpStatus"] = eventData.rsvp_status;
+                    await eventObject.SaveAsync();
+                }
+
+            }
+            catch (FacebookApiException ex)
+            {
+                // handel error message
             }
         }
 
