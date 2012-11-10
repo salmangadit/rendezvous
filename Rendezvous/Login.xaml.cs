@@ -55,7 +55,7 @@ namespace Rendezvous
             try
             {
                 ParseUser user = await ParseFacebookUtils.LogInAsync(
-                    browser, new[] { "user_likes", "email" });
+                    browser, new[] { "user_likes", "email", "create_event" });
                 // The user logged in with Facebook!
                 
             }
@@ -81,49 +81,5 @@ namespace Rendezvous
 
             Frame.Navigate(typeof(ItemsPage), (Object)parameters);
         }
-
-
-        //private void browser_Loaded_1(object sender, RoutedEventArgs e)
-        //{
-            
-        //}
-
-        //private Uri GetFacebookLoginUrl(string appId, string extendedPermissions)
-        //{
-        //    dynamic parameters = new ExpandoObject();
-        //    parameters.client_id = appId;
-        //    parameters.redirect_uri = "https://www.facebook.com/connect/login_success.html";
-        //    parameters.response_type = "token";
-        //    parameters.display = "popup";
-
-        //    // add the 'scope' parameter only if we have extendedPermissions.
-        //    if (!string.IsNullOrWhiteSpace(extendedPermissions))
-        //    {
-        //        // A comma-delimited list of permissions
-        //        parameters.scope = extendedPermissions;
-        //    }
-
-        //    return _fb.GetLoginUrl(parameters);
-        //}
-
-        //private void browser_LoadCompleted(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
-        //{
-        //    FacebookOAuthResult oauthResult;
-        //    if (!_fb.TryParseOAuthCallbackUrl(e.Uri, out oauthResult))
-        //    {
-        //        return;
-        //    }
-
-        //    if (oauthResult.IsSuccess)
-        //    {
-        //        var accessToken = oauthResult.AccessToken;
-        //        LoginSucceded(accessToken);
-        //    }
-        //    else
-        //    {
-        //        // user cancelled
-        //    }
-        //}
-
     }
 }
