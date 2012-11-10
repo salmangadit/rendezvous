@@ -35,6 +35,7 @@ namespace Rendezvous
             this.Suspending += OnSuspending;
 
             ParseClient.Initialize("LksU7Zn29D4GwHNBR0Jnnm1jkIxqOb3BVPZlNatX", "AQVHoduhgt1lHUSlmO8zexInbhR4me1VfjITg99Q");
+            ParseFacebookUtils.Initialize("162446510564975");
 
         }
 
@@ -80,7 +81,7 @@ namespace Rendezvous
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(typeof(ItemsPage), "AllGroups"))
+                if (!rootFrame.Navigate(typeof(Login), "AllGroups"))
                 {
                     throw new Exception("Failed to create initial page");
                 }

@@ -1,7 +1,7 @@
 ﻿using Rendezvous.Data;
-
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using Windows.Foundation;
@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Facebook;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
@@ -26,6 +27,10 @@ namespace Rendezvous
     /// </summary>
     public sealed partial class ItemsPage : Rendezvous.Common.LayoutAwarePage
     {
+        private readonly FacebookClient _fb = new FacebookClient();
+        private string _userId;
+        private string _accessToken;
+
         public ItemsPage()
         {
             this.InitializeComponent();
@@ -43,8 +48,40 @@ namespace Rendezvous
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var sampleDataGroups = SampleDataSource.GetGroups((String)navigationParameter);
-            this.DefaultViewModel["Items"] = sampleDataGroups;
+            //var sampleDataGroups = SampleDataSource.GetGroups((String)navigationParameter);
+            dynamic parameters = (dynamic)navigationParameter;
+            //this.DefaultViewModel["Items"] = sampleDataGroups;
+            _userId = parameters.id;
+            _accessToken = parameters.access_token;
+            LoadFacebookData();
+        }
+
+        private void LoadFacebookData()
+        {
+            GraphApiAsyncDynamicExample();
+        }
+
+        private async void GraphApiAsyncDynamicExample()
+        {
+            _fb.AccessToken = _accessToken;
+            try
+            {
+                // instead of casting to IDictionary<string,object> or IList<object>
+                // you can also make use of the dynamic keyword.
+                dynamic result = await _fb.GetTaskAsync("me");
+
+                // You can either access it this way, using the .
+                dynamic id = result.id;
+                dynamic name = result.name;
+
+                // if dynamic you don't need to cast explicitly.
+                fbName.Text = name;
+            }
+            catch (FacebookApiException ex)
+            {
+                int a;
+                // handle error
+            }
         }
 
         /// <summary>
