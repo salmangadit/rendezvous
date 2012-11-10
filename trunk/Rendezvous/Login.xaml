@@ -7,8 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <Button Name="btnLogin" HorizontalAlignment="Center" Content="Login with Facebook" Click="btnLogin_Click_1" />
+    <Grid Background="#215968">
+        <Image x:Name="picProfile" Margin="406,190,406,316" Source="Assets/SplashScreen.png"/>
+        <Button Name="btnLogin" HorizontalAlignment="Center" Content="Login with Facebook" Click="btnLogin_Click_1" Background="#215968" Margin="603,381,591,349"/>
         <WebView Name="browser" Visibility="Collapsed"/>
     </Grid>
 </Page>
