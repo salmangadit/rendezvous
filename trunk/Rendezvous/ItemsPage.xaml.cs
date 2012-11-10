@@ -156,7 +156,7 @@ namespace Rendezvous
 
                             attendeePicture = string.Format("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", attendeeFbId, "large", _fb.AccessToken);
 
-                            eventObject.Items.Add(new SampleDataItem(attendeeFbId, attendeeName, rsvpStatusAttendee, attendeePicture, eventObject));
+                            eventObject.Items.Add(new SampleDataItem(attendeeFbId, attendeeName, rsvpStatusAttendee, attendeePicture, eventObject, _accessToken));
                         }
                     }
                     catch (FacebookApiException ex)
