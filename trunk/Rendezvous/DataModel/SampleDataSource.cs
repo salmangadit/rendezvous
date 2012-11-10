@@ -11,6 +11,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Collections.Specialized;
+using Facebook;
+using Parse;
+using System.Threading.Tasks;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -30,13 +33,15 @@ namespace Rendezvous.Data
     {
         private static Uri _baseUri = new Uri("ms-appx:///");
 
-        public SampleDataCommon(String uniqueId, String title, String subtitle, String imagePath, String description)
+
+        public SampleDataCommon(String uniqueId, String title, String startDate, string endDate, String imagePath, String description)
         {
             this._uniqueId = uniqueId;
             this._title = title;
-            this._subtitle = subtitle;
+            this._startDate = startDate;
             this._description = description;
             this._imagePath = imagePath;
+            this._endDate = endDate;
         }
 
         private string _uniqueId = string.Empty;
@@ -56,8 +61,32 @@ namespace Rendezvous.Data
         private string _subtitle = string.Empty;
         public string Subtitle
         {
-            get { return this._subtitle; }
+            get
+            {
+
+                if (EndDate != String.Empty)
+                {
+                    return StartDate + " to " + EndDate;
+                }
+
+                return StartDate;
+
+            }
             set { this.SetProperty(ref this._subtitle, value); }
+        }
+
+        private string _endDate = string.Empty;
+        public string EndDate
+        {
+            get { return this._endDate; }
+            set { this.SetProperty(ref this._endDate, value); }
+        }
+
+        private string _startDate = string.Empty;
+        public string StartDate
+        {
+            get { return this._startDate; }
+            set { this.SetProperty(ref this._startDate, value); }
         }
 
         private string _description = string.Empty;
@@ -105,18 +134,10 @@ namespace Rendezvous.Data
     /// </summary>
     public class SampleDataItem : SampleDataCommon
     {
-        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, String description, String content, SampleDataGroup group)
-            : base(uniqueId, title, subtitle, imagePath, description)
+        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, SampleDataGroup group)
+            : base(uniqueId, title, subtitle, "", imagePath, "")
         {
-            this._content = content;
             this._group = group;
-        }
-
-        private string _content = string.Empty;
-        public string Content
-        {
-            get { return this._content; }
-            set { this.SetProperty(ref this._content, value); }
         }
 
         private SampleDataGroup _group;
@@ -132,8 +153,8 @@ namespace Rendezvous.Data
     /// </summary>
     public class SampleDataGroup : SampleDataCommon
     {
-        public SampleDataGroup(String uniqueId, String title, String subtitle, String imagePath, String description)
-            : base(uniqueId, title, subtitle, imagePath, description)
+        public SampleDataGroup(String uniqueId, String title, String startDate, String endDate, String imagePath, String description)
+            : base(uniqueId, title, startDate, endDate, imagePath, description)
         {
             Items.CollectionChanged += ItemsCollectionChanged;
         }
@@ -153,7 +174,7 @@ namespace Rendezvous.Data
                 case NotifyCollectionChangedAction.Add:
                     if (e.NewStartingIndex < 12)
                     {
-                        TopItems.Insert(e.NewStartingIndex,Items[e.NewStartingIndex]);
+                        TopItems.Insert(e.NewStartingIndex, Items[e.NewStartingIndex]);
                         if (TopItems.Count > 12)
                         {
                             TopItems.RemoveAt(12);
@@ -211,7 +232,7 @@ namespace Rendezvous.Data
         private ObservableCollection<SampleDataItem> _topItem = new ObservableCollection<SampleDataItem>();
         public ObservableCollection<SampleDataItem> TopItems
         {
-            get {return this._topItem; }
+            get { return this._topItem; }
         }
     }
 
@@ -229,13 +250,26 @@ namespace Rendezvous.Data
         public ObservableCollection<SampleDataGroup> AllGroups
         {
             get { return this._allGroups; }
+            set { this._allGroups = value; }
         }
 
-        public static IEnumerable<SampleDataGroup> GetGroups(string uniqueId)
+        public static IEnumerable<SampleDataGroup> GetEvents(string uniqueId)
         {
-            if (!uniqueId.Equals("AllGroups")) throw new ArgumentException("Only 'AllGroups' is supported as a collection of groups");
-            
+            if (!uniqueId.Equals("AllEvents")) throw new ArgumentException("Only 'AllEvents' is supported as a collection of groups");
+
             return _sampleDataSource.AllGroups;
+        }
+
+        public static void SetEvents(List<SampleDataGroup> events)
+        {
+            ObservableCollection<SampleDataGroup> obEvents = new ObservableCollection<SampleDataGroup>();
+
+            foreach (SampleDataGroup eventData in events)
+            {
+                obEvents.Add(eventData);
+            }
+
+            _sampleDataSource.AllGroups = obEvents;
         }
 
         public static SampleDataGroup GetGroup(string uniqueId)
@@ -256,22 +290,21 @@ namespace Rendezvous.Data
 
         public SampleDataSource()
         {
-            String ITEM_CONTENT = String.Format("Item Content: {0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}",
+            /*String ITEM_CONTENT = String.Format("Item Content: {0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}\n\n{0}",
                         "Curabitur class aliquam vestibulum nam curae maecenas sed integer cras phasellus suspendisse quisque donec dis praesent accumsan bibendum pellentesque condimentum adipiscing etiam consequat vivamus dictumst aliquam duis convallis scelerisque est parturient ullamcorper aliquet fusce suspendisse nunc hac eleifend amet blandit facilisi condimentum commodo scelerisque faucibus aenean ullamcorper ante mauris dignissim consectetuer nullam lorem vestibulum habitant conubia elementum pellentesque morbi facilisis arcu sollicitudin diam cubilia aptent vestibulum auctor eget dapibus pellentesque inceptos leo egestas interdum nulla consectetuer suspendisse adipiscing pellentesque proin lobortis sollicitudin augue elit mus congue fermentum parturient fringilla euismod feugiat");
-
             var group1 = new SampleDataGroup("Event- Id",
                     "Event Title: Whatever",
                     "Event Subtitle: Start Time - End Time",
                     "Assets/DarkGray.png",
                     "Event Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor scelerisque lorem in vehicula. Aliquam tincidunt, lacus ut sagittis tristique, turpis massa volutpat augue, eu rutrum ligula ante a ante");
-            group1.Items.Add(new SampleDataItem("Facebook-id-Event-id",
+            group1.Items.Add(new SampleDataItem("Facebook-id-of-friend",
                     "Friend name: HerebeName",
                     "Friend Lastname: herebelastname",
                     "Assets/LightGray.png",
                     "Item Description: Pellentesque porta, mauris quis interdum vehicula, urna sapien ultrices velit, nec venenatis dui odio in augue. Cras posuere, enim a cursus convallis, neque turpis malesuada erat, ut adipiscing neque tortor ac erat.",
                     ITEM_CONTENT,
                     group1));
-            this.AllGroups.Add(group1);
+            this.AllGroups.Add(group1);*/
         }
     }
 }

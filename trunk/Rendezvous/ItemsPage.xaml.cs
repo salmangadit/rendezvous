@@ -19,6 +19,8 @@ using Facebook;
 using Newtonsoft.Json.Linq;
 using Parse;
 using Windows.UI.Xaml.Media.Imaging;
+using System.Text;
+using System.Globalization;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
@@ -34,6 +36,8 @@ namespace Rendezvous
         private readonly FacebookClient _fb = new FacebookClient();
         private string _userId;
         private string _accessToken;
+
+        private List<dynamic> eventsData = new List<dynamic>();
 
         public ItemsPage()
         {
@@ -52,20 +56,121 @@ namespace Rendezvous
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var sampleDataGroups = SampleDataSource.GetGroups("AllGroups");
+
+            //get events and populate first
             dynamic parameters = (dynamic)navigationParameter;
-            this.DefaultViewModel["Items"] = sampleDataGroups;
             _userId = parameters.id;
             _accessToken = parameters.access_token;
             _fb.AccessToken = _accessToken;
+
             LoadFacebookData();
+
         }
 
         private void LoadFacebookData()
         {
+            GetEventsData();
             GetIdAndName();
-            GetEvents();
             GetUserProfilePicture();
+        }
+
+        private async void GetEventsData()
+        {
+            try
+            {
+                dynamic result = await _fb.GetTaskAsync("me/events");
+
+                eventsData = result.data;
+
+                List<SampleDataGroup> allEventsFromFb = new List<SampleDataGroup>();
+
+                foreach (dynamic eventData in eventsData)
+                {
+                    DateTime startDate = DateTime.Parse((string)eventData.start_time);
+
+                    DateTime endDate;
+                    string endDateString;
+
+                    try
+                    {
+                        endDate = DateTime.Parse((string)eventData.end_time);
+                        endDateString = endDate.ToString();
+
+                    }
+                    catch
+                    {
+                        endDateString = "";
+                    }
+
+                    string eventPicture = "Assets/LightGray.png";
+                    string attendeePicture = "Assets/LightGray.png";
+
+                    dynamic eventResult = await _fb.GetTaskAsync("/" + eventData.id);
+
+                    try
+                    {
+                        // available picture types: square (50x50), small (50xvariable height), large (about 200x variable height) (all size in pixels)
+                        // for more info visit http://developers.facebook.com/docs/reference/api
+                        eventPicture = string.Format("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", eventData.id,
+                            "large", _fb.AccessToken);
+                    }
+                    catch (FacebookApiException ex)
+                    {
+                        // handel error message
+                    }
+
+                    SampleDataGroup eventObject = new SampleDataGroup(eventData.id, eventData.name,
+                        startDate.ToString(), endDateString, eventPicture, eventResult.description);
+
+                    try
+                    {
+                        dynamic attendeeResult = await _fb.GetTaskAsync(String.Format("/{0}/invited", eventData.id));
+
+                        foreach (dynamic user in attendeeResult.data)
+                        {
+                            string attendeeName = (string)user.name;
+                            string attendeeFbId = (string)user.id;
+                            string rsvpStatus = (string)user.rsvp_status;
+
+                            switch (rsvpStatus)
+                            {
+                                case "attending":
+                                    rsvpStatus = "Attending";
+                                    break;
+                                case "not_replied":
+                                    rsvpStatus = "Not Replied";
+                                    break;
+                                case "not_attending":
+                                    rsvpStatus = "Not Attending";
+                                    break;
+                                default:
+                                    rsvpStatus = "Error in response";
+                                    break;
+                            }
+
+                            attendeePicture = string.Format("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", attendeeFbId, "large", _fb.AccessToken);
+
+                            eventObject.Items.Add(new SampleDataItem(attendeeFbId, attendeeName, rsvpStatus, attendeePicture, eventObject));
+                        }
+                    }
+                    catch (FacebookApiException ex)
+                    {
+                        // handel error message
+                    }
+
+                    allEventsFromFb.Add(eventObject);
+                }
+
+                SampleDataSource.SetEvents(allEventsFromFb);
+
+                var allEvents = SampleDataSource.GetEvents("AllEvents"); //populate with all events
+
+                this.DefaultViewModel["Items"] = allEvents;
+            }
+            catch (FacebookApiException ex)
+            {
+                // handel error message
+            }
         }
 
         private async void GetUserProfilePicture()
@@ -88,7 +193,7 @@ namespace Rendezvous
         }
         private async void GetIdAndName()
         {
-            
+
             try
             {
                 dynamic result = await _fb.GetTaskAsync("me");
@@ -100,35 +205,6 @@ namespace Rendezvous
             catch (FacebookApiException ex)
             {
 
-            }
-        }
-
-        private async void GetEvents()
-        {
-            try
-            {
-                dynamic result = await _fb.GetTaskAsync("me/events");
-
-                List<dynamic> eventsData = result.data;
-
-                foreach (dynamic eventData in eventsData)
-                {
-                    //push each event into parse
-                    ParseObject eventObject = new ParseObject("Event");
-                    eventObject["userId"] = _userId;
-                    eventObject["eventId"] = eventData.id;
-                    eventObject["name"] = eventData.name;
-                    eventObject["startTime"] = eventData.start_time;
-                    eventObject["endTime"] = eventData.endtime;
-                    eventObject["location"] = eventData.location;
-                    eventObject["rsvpStatus"] = eventData.rsvp_status;
-                    await eventObject.SaveAsync();
-                }
-
-            }
-            catch (FacebookApiException ex)
-            {
-                // handel error message
             }
         }
 
