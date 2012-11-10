@@ -26,6 +26,7 @@
         * Row 1 contains the rest of the page layout
     -->
     <Grid
+        Background="#215968"
         Style="{StaticResource LayoutRootStyle}"
         DataContext="{Binding Group}"
         d:DataContext="{Binding AllGroups[0], Source={d:DesignInstance Type=data:SampleDataSource, IsDesignTimeCreatable=True}}">
