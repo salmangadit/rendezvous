@@ -134,10 +134,11 @@ namespace Rendezvous.Data
     /// </summary>
     public class SampleDataItem : SampleDataCommon
     {
-        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, SampleDataGroup group)
+        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, SampleDataGroup group, string accessToken)
             : base(uniqueId, title, subtitle, "", imagePath, "")
         {
             this._group = group;
+            this.AccessToken = accessToken;
         }
 
         private SampleDataGroup _group;
@@ -145,6 +146,19 @@ namespace Rendezvous.Data
         {
             get { return this._group; }
             set { this.SetProperty(ref this._group, value); }
+        }
+
+        private string _accessToken;
+        public String AccessToken
+        {
+            get
+            {
+                return this._accessToken;
+            }
+            set
+            {
+                this._accessToken = value;
+            }
         }
     }
 
