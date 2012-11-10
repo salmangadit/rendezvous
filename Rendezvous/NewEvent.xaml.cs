@@ -145,11 +145,13 @@ namespace Rendezvous
         {
             string nameEvent = eventName.Text;
             string descEvent = description.Text;
-            DateTime timeStart;
-            DateTime.TryParseExact(startTime.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out timeStart);
+            DateTime timeStart = (DateTime)startTime.Value;
+            //string startTimeString = timeStart.ToString();
+            //DateTime.TryParseExact(startTimeString, "MM/dd/yyyy HH:mm:ss tt", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out timeStart);
 
-            DateTime timeEnd;
-            DateTime.TryParseExact(startTime.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out timeEnd);
+            DateTime timeEnd = (DateTime)endTime.Value;
+            //string endTimeString = timeEnd.ToString();
+            //DateTime.TryParseExact(endTimeString, "MM/dd/yyyy HH:mm:ss tt", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out timeEnd);
 
             string loc = location.Text;
             string eventType = cmbEventType.SelectedItem.ToString();
@@ -169,14 +171,14 @@ namespace Rendezvous
                     AddFriendsToEvent(newPostId, invited);
                 }
 
-                
+
             };
-            
+
             foreach (string item in lstInvitedFriends.Items)
             {
                 invited.Add(item);
             }
-            
+
             var parameters = new Dictionary<string, object>
             {
              {"name", name},
@@ -186,7 +188,7 @@ namespace Rendezvous
              {"location", loc},
              {"privacy_type", type.ToUpper()}
             };
-            
+
             try
             {
                 var postId = await _fb.PostTaskAsync(_userId + "/events", parameters);
@@ -221,9 +223,9 @@ namespace Rendezvous
             foreach (string selected in invited)
             {
                 int index = friends.IndexOf(selected);
-                
+
                 thechosenones += ids[index];
-               thechosenones += ",";
+                thechosenones += ",";
             }
 
             thechosenones = thechosenones.Remove(thechosenones.Length - 1, 1);
@@ -246,8 +248,8 @@ namespace Rendezvous
                 //handle facebook exception
                 int a;
             }
-            
-            
+
+
         }
 
         private async void ShowSuccessMessage()
