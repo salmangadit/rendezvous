@@ -34,7 +34,7 @@ namespace Rendezvous.Data
         private static Uri _baseUri = new Uri("ms-appx:///");
 
 
-        public SampleDataCommon(String uniqueId, String title, String startDate, string endDate, String imagePath, String description)
+        public SampleDataCommon(String uniqueId, String title, String startDate, string endDate, String imagePath, String description, string accessToken)
         {
             this._uniqueId = uniqueId;
             this._title = title;
@@ -42,6 +42,20 @@ namespace Rendezvous.Data
             this._description = description;
             this._imagePath = imagePath;
             this._endDate = endDate;
+            this._accessToken = accessToken;
+        }
+
+        private string _accessToken;
+        public String AccessToken
+        {
+            get
+            {
+                return this._accessToken;
+            }
+            set
+            {
+                this._accessToken = value;
+            }
         }
 
         private string _uniqueId = string.Empty;
@@ -134,11 +148,10 @@ namespace Rendezvous.Data
     /// </summary>
     public class SampleDataItem : SampleDataCommon
     {
-        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, SampleDataGroup group, string accessToken)
+        public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, SampleDataGroup group)
             : base(uniqueId, title, subtitle, "", imagePath, "")
         {
             this._group = group;
-            this.AccessToken = accessToken;
         }
 
         private SampleDataGroup _group;
@@ -146,19 +159,6 @@ namespace Rendezvous.Data
         {
             get { return this._group; }
             set { this.SetProperty(ref this._group, value); }
-        }
-
-        private string _accessToken;
-        public String AccessToken
-        {
-            get
-            {
-                return this._accessToken;
-            }
-            set
-            {
-                this._accessToken = value;
-            }
         }
     }
 
