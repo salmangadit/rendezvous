@@ -153,9 +153,24 @@ namespace Rendezvous.Data
     /// </summary>
     public class SampleDataGroup : SampleDataCommon
     {
-        public SampleDataGroup(String uniqueId, String title, String startDate, String endDate, String imagePath, String description)
+        string _rsvpStatus;
+
+        String RsvpStatus
+        {
+            get
+            {
+                return _rsvpStatus;
+            }
+            set
+            {
+                _rsvpStatus = value;
+            }
+        }
+
+        public SampleDataGroup(String uniqueId, String title, String startDate, String endDate, String imagePath, String description, String rsvpStatus)
             : base(uniqueId, title, startDate, endDate, imagePath, description)
         {
+            this.RsvpStatus = rsvpStatus;
             Items.CollectionChanged += ItemsCollectionChanged;
         }
 
