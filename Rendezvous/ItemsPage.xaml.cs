@@ -135,7 +135,7 @@ namespace Rendezvous
                             string attendeeFbId = (string)user.id;
                             string rsvpStatusAttendee = (string)user.rsvp_status;
 
-                            switch (rsvpStatus)
+                            switch (rsvpStatusAttendee)
                             {
                                 case "attending":
                                     rsvpStatusAttendee = "Attending";
