@@ -34,7 +34,7 @@ namespace Rendezvous.Data
         private static Uri _baseUri = new Uri("ms-appx:///");
 
 
-        public SampleDataCommon(String uniqueId, String title, String startDate, string endDate, String imagePath, String description, string accessToken)
+        public SampleDataCommon(String uniqueId, String title, String startDate, string endDate, String imagePath, String description)
         {
             this._uniqueId = uniqueId;
             this._title = title;
@@ -42,7 +42,7 @@ namespace Rendezvous.Data
             this._description = description;
             this._imagePath = imagePath;
             this._endDate = endDate;
-            this._accessToken = accessToken;
+
         }
 
         private string _accessToken;
@@ -181,10 +181,11 @@ namespace Rendezvous.Data
             }
         }
 
-        public SampleDataGroup(String uniqueId, String title, String startDate, String endDate, String imagePath, String description, String rsvpStatus)
+        public SampleDataGroup(String uniqueId, String title, String startDate, String endDate, String imagePath, String description, String rsvpStatus, string accessToken)
             : base(uniqueId, title, startDate, endDate, imagePath, description)
         {
             this.RsvpStatus = rsvpStatus;
+            this.AccessToken = accessToken;
             Items.CollectionChanged += ItemsCollectionChanged;
         }
 

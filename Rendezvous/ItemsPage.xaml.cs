@@ -123,7 +123,7 @@ namespace Rendezvous
                     }
 
                     SampleDataGroup eventObject = new SampleDataGroup(eventData.id, eventData.name,
-                        startDate.ToString(), endDateString, eventPicture, eventResult.description, rsvpStatus);
+                        startDate.ToString(), endDateString, eventPicture, eventResult.description, rsvpStatus, _accessToken);
 
                     try
                     {
