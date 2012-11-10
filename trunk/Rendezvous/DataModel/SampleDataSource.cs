@@ -155,7 +155,7 @@ namespace Rendezvous.Data
     {
         string _rsvpStatus;
 
-        String RsvpStatus
+        public String RsvpStatus
         {
             get
             {
