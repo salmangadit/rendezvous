@@ -88,6 +88,11 @@ namespace Rendezvous
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            ParseObject events = new ParseObject("Events");
+            events["id"] = 1337;
+            events["eventName"] = "Fun";
+            await events.SaveAsync();
         }
 
         /// <summary>

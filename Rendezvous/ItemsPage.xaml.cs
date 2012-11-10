@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Facebook;
+using Windows.UI.Xaml.Media.Imaging;
 
 // The Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234233
 
@@ -53,17 +54,37 @@ namespace Rendezvous
             //this.DefaultViewModel["Items"] = sampleDataGroups;
             _userId = parameters.id;
             _accessToken = parameters.access_token;
+            _fb.AccessToken = _accessToken;
             LoadFacebookData();
         }
 
         private void LoadFacebookData()
         {
             GraphApiAsyncDynamicExample();
+            GetUserProfilePicture();
         }
 
+        private async void GetUserProfilePicture()
+        {
+            try
+            {
+                dynamic result = await _fb.GetTaskAsync("me?fields=picture");
+                string id = result.id;
+
+                // available picture types: square (50x50), small (50xvariable height), large (about 200x variable height) (all size in pixels)
+                // for more info visit http://developers.facebook.com/docs/reference/api
+                string profilePictureUrl = string.Format("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", _userId, "large", _fb.AccessToken);
+
+                picProfile.Source = new BitmapImage(new Uri(profilePictureUrl));
+            }
+            catch (FacebookApiException ex)
+            {
+                // handel error message
+            }
+        }
         private async void GraphApiAsyncDynamicExample()
         {
-            _fb.AccessToken = _accessToken;
+            
             try
             {
                 // instead of casting to IDictionary<string,object> or IList<object>

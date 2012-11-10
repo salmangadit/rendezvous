@@ -9,6 +9,6 @@
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Button Name="btnLogin" HorizontalAlignment="Center" Content="Login with Facebook" Click="btnLogin_Click_1" />
-        <WebView Name="browser" Visibility="Collapsed" Loaded="browser_Loaded_1"/>
+        <WebView Name="browser" Visibility="Collapsed"/>
     </Grid>
 </Page>
