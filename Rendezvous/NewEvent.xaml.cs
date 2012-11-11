@@ -162,6 +162,9 @@ namespace Rendezvous
         private async void CreateEvent(string name, string desc, string start, string end, string loc, string type)
         {
             List<string> invited = new List<string>();
+            FacebookClient _fb = new FacebookClient();
+            _fb.AccessToken = _accessToken;
+
             _fb.PostCompleted += (o, e) =>
             {
                 if (e.Error == null)
@@ -209,6 +212,9 @@ namespace Rendezvous
 
         private async void AddFriendsToEvent(string newPostId, List<string> invited)
         {
+            FacebookClient _fb = new FacebookClient();
+            _fb.AccessToken = _accessToken;
+            
             _fb.PostCompleted += (o, e) =>
             {
                 if (e.Error == null)
@@ -216,7 +222,8 @@ namespace Rendezvous
                     ShowSuccessMessage();
                 }
             };
-
+            
+            
             List<string> invitedIds = new List<string>();
             string thechosenones = string.Empty;
 
@@ -228,34 +235,41 @@ namespace Rendezvous
                 thechosenones += ",";
             }
 
-            thechosenones = thechosenones.Remove(thechosenones.Length - 1, 1);
+            if (thechosenones.Length != 0)
+            {
+                thechosenones = thechosenones.Remove(thechosenones.Length - 1, 1);
 
-            var parameters = new Dictionary<string, object>
+                var parameters = new Dictionary<string, object>
             {
              {"users", thechosenones},
             };
-            try
-            {
-                var postId = await _fb.PostTaskAsync(newPostId + "/invited", parameters);
+                try
+                {
+                    var postId = await _fb.PostTaskAsync(newPostId + "/invited", parameters);
+                }
+                catch (FacebookOAuthException ex)
+                {
+                    //handle oauth exception
+                    int a;
+                }
+                catch (FacebookApiException ex)
+                {
+                    //handle facebook exception
+                    int a;
+                }
             }
-            catch (FacebookOAuthException ex)
-            {
-                //handle oauth exception
-                int a;
-            }
-            catch (FacebookApiException ex)
-            {
-                //handle facebook exception
-                int a;
-            }
-
-
+            else
+                ShowSuccessMessage();
         }
 
         private async void ShowSuccessMessage()
         {
-            MessageDialog msg = new MessageDialog("Event Created On Facebook and Users Invited!", "Event Created Successfully!");
-            await msg.ShowAsync();
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                var messageDialog = new MessageDialog("Event Created On Facebook and Users Invited!", "Event Created Successfully!");
+
+                await messageDialog.ShowAsync();
+            });
         }
 
         private void lstSuggestedFriends_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
@@ -274,7 +288,6 @@ namespace Rendezvous
 
         private void FilterList(string filter)
         {
-            //lstSuggestedFriends.Items.Clear();
             List<string> results = friends.FindAll(delegate(string s)
             {
                 return s.ToUpper().StartsWith(filter.ToUpper());
