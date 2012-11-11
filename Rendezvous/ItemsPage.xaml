@@ -78,7 +78,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="pageTitle" Grid.Column="0" Text="{StaticResource AppName}" IsHitTestVisible="false" Style="{StaticResource PageHeaderTextStyle}"/>
                 <Image x:Name="picProfile" Width="100" Height="100" Grid.Column="1"/>
-                <TextBlock x:Name="fbName" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30"/>
+                <TextBlock x:Name="fbName" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
             </Grid>
         </Grid>
 
