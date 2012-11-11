@@ -55,7 +55,7 @@ namespace Rendezvous
             try
             {
                 ParseUser user = await ParseFacebookUtils.LogInAsync(
-                    browser, new[] { "user_likes", "email", "create_event" });
+                    browser, new[] { "user_likes", "email", "create_event", "rsvp_event" });
                 // The user logged in with Facebook!
                 
             }

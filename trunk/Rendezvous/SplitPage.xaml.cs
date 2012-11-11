@@ -1,4 +1,5 @@
-﻿using Rendezvous.Data;
+﻿using Facebook;
+using Rendezvous.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,6 +28,9 @@ namespace Rendezvous
     /// </summary>
     public sealed partial class SplitPage : Rendezvous.Common.LayoutAwarePage
     {
+        string _accessToken;
+        string _eventId;
+
         public SplitPage()
         {
             this.InitializeComponent();
@@ -70,10 +74,38 @@ namespace Rendezvous
                 }
             }
 
+            _accessToken = group.AccessToken;
+            _eventId = group.UniqueId;
             eventPicture.Source = group.Image != null ? group.Image : new BitmapImage(new Uri("Assets/LightGray.png"));
             eventTitle.Text = group.Title != null ? group.Title : "";
             eventSubtitle.Text = group.Subtitle != null ? group.Subtitle : "";
             Description.Text = group.Description != null ? group.Description : "";
+
+            if (group.RsvpStatus == "attending")
+            {
+                Join.IsEnabled = false;
+                Maybe.IsEnabled = false;
+                Decline.IsEnabled = true;
+            }
+            else if (group.RsvpStatus == "declined")
+            {
+                Join.IsEnabled = true;
+                Maybe.IsEnabled = true;
+                Decline.IsEnabled = false;
+            }
+            else if (group.RsvpStatus == "not_replied")
+            {
+                Join.IsEnabled = true;
+                Maybe.IsEnabled = true;
+                Decline.IsEnabled = true;
+            }
+            else if (group.RsvpStatus == "unsure")
+            {
+                Join.IsEnabled = true;
+                Maybe.IsEnabled = false;
+                Decline.IsEnabled = true;
+            }
+          
         }
 
         /// <summary>
@@ -192,5 +224,142 @@ namespace Rendezvous
         }
 
         #endregion
+
+        private async void Join_Click_1(object sender, RoutedEventArgs e)
+        {
+            FacebookClient _fb = new FacebookClient();
+            _fb.AccessToken = _accessToken;
+
+            _fb.PostCompleted += (o, ex) =>
+            {
+                if (ex.Error == null)
+                {
+                    var result = (bool)ex.GetResultData();
+                    if (result)
+                        AttendingDisable();
+                }
+            };
+            var parameters = new Dictionary<string, object>
+            {
+            };
+
+            try
+            {
+                var postId = await _fb.PostTaskAsync(_eventId + "/attending", parameters);
+            }
+            catch (FacebookOAuthException ex)
+            {
+                //handle oauth exception
+                int a;
+            }
+            catch (FacebookApiException ex)
+            {
+                //handle facebook exception
+                int a;
+            }
+        }
+
+        private async void Maybe_Click_1(object sender, RoutedEventArgs e)
+        {
+            FacebookClient _fb = new FacebookClient();
+            _fb.AccessToken = _accessToken;
+
+            _fb.PostCompleted += (o, ex) =>
+            {
+                if (ex.Error == null)
+                {
+                    var result = (bool)ex.GetResultData();
+                    if (result)
+                    {
+                        MaybeDisable();
+                    }
+                }
+            };
+
+            var parameters = new Dictionary<string, object>
+            {
+            };
+
+            try
+            {
+                var postId = await _fb.PostTaskAsync(_eventId + "/maybe", parameters);
+            }
+            catch (FacebookOAuthException ex)
+            {
+                //handle oauth exception
+                int a;
+            }
+            catch (FacebookApiException ex)
+            {
+                //handle facebook exception
+                int a;
+            }
+        }
+
+        private async void MaybeDisable()
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Maybe.IsEnabled = false;
+                Decline.IsEnabled = true;
+                Join.IsEnabled = true;
+            });
+        }
+
+        private async void AttendingDisable()
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Join.IsEnabled = false;
+                Maybe.IsEnabled = true;
+                Decline.IsEnabled = true;
+            });
+        }
+
+
+        private async void DeclineDisable()
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Decline.IsEnabled = false;
+                Maybe.IsEnabled = true;
+                Join.IsEnabled = true;
+            });
+        }
+
+
+        private async void Decline_Click_1(object sender, RoutedEventArgs e)
+        {
+            FacebookClient _fb = new FacebookClient();
+            _fb.AccessToken = _accessToken;
+
+            _fb.PostCompleted += (o, ex) =>
+            {
+                if (ex.Error == null)
+                {
+                    var result = (bool)ex.GetResultData();
+                    if (result)
+                        DeclineDisable();
+                }
+            };
+            var parameters = new Dictionary<string, object>
+            {
+            };
+
+            try
+            {
+                var postId = await _fb.PostTaskAsync(_eventId + "/declined", parameters);
+            }
+            catch (FacebookOAuthException ex)
+            {
+                //handle oauth exception
+                int a;
+            }
+            catch (FacebookApiException ex)
+            {
+                //handle facebook exception
+                int a;
+            }
+        }
     }
 }

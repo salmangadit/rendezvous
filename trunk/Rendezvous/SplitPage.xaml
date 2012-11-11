@@ -94,6 +94,11 @@
                 <StackPanel x:Name="itemDetailTitlePanel" Grid.Row="1" Grid.Column="1">
                     <TextBlock x:Name="eventTitle" Margin="0,-10,0,0" Style="{StaticResource SubheaderTextStyle}"/>
                     <TextBlock x:Name="eventSubtitle" Margin="0,0,0,20" Style="{StaticResource SubtitleTextStyle}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Name="Join" Content="Join" Click="Join_Click_1" Margin="0,0,10,0"/>
+                        <Button Name="Maybe" Content="Maybe" Click="Maybe_Click_1" Margin="10,0,10,0"/>
+                        <Button Name="Decline" Content="Decline" Click="Decline_Click_1" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
                 <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0" Name="Description" Style="{StaticResource BodyTextStyle}"/>
             </Grid>
